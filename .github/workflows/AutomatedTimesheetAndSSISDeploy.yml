@@ -33,7 +33,7 @@ jobs:
         shell: cmd
         run: |
           sqlcmd -S LAPTOP-JUKB3QVS -E -i C:\AutomatedTimesheetProject_NS\SQLScripts\AutomatedTimesheetProject_NS_Job.sql
-      
+
       - name: Run SQL Agent Job (AutomatedTimesheetProject_NS_Job)
         shell: cmd
         run: |
