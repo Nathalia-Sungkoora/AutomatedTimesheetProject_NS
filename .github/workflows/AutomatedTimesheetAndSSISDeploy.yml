@@ -9,26 +9,25 @@ jobs:
     runs-on: [self-hosted, windows]
 
     env:
-      ISPAC_PATH: "C:\AutomatedTimesheetProject_NS\SSIS_Automated_Timesheet_Project.ispac"
+      ISPAC_PATH: "C:/AutomatedTimesheetProject_NS/SSIS_Automated_Timesheet_Project.ispac"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: PrepareAutomatedTimesheetAndSSISDeploy Script
+      - name: Prepare AutomatedTimesheetAndSSISDeploy Script
         shell: powershell
         run: |
           $sql = @"
           :setvar IspacFullPath "$env:ISPAC_PATH"
-          :r C:env:
-  ISPAC_PATH: C:\\AutomatedTimesheetProject_NS\\SSIS_Automated_Timesheet_Project.ispac.sql
+          :r C:\AutomatedTimesheetProject_NS\SQLScripts\AutomatedTimesheetAndSSISDeploy.sql
           "@
           $sql | Out-File -FilePath AutomatedTimesheetAndSSISDeploy.sql -Encoding ASCII
 
       - name: Deploy .ispac to SSISDB using Windows Auth
         shell: cmd
         run: |
-          sqlcmd -S LAPTOP-JUKB3QVS  -E -i AutomatedTimesheetAndSSISDeploy.sql
+          sqlcmd -S LAPTOP-JUKB3QVS -E -i AutomatedTimesheetAndSSISDeploy.sql
 
       - name: Create or update SQL Agent job (SSIS Package)
         shell: cmd
