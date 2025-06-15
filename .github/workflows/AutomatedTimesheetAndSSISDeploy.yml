@@ -9,7 +9,7 @@ jobs:
     runs-on: [self-hosted, windows]
 
     env:
-      ISPAC_PATH: "C:/AutomatedTimesheetProject_NS/SSIS_Automated_Timesheet_Project.ispac"
+      ISPAC_PATH: "C:\\AutomatedTimesheetProject_NS\\SSIS_Automated_Timesheet_Project.ispac"
 
     steps:
       - name: Checkout code

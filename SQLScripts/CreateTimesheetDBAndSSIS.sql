@@ -120,7 +120,7 @@ CREATE TABLE dbo.AuditLog (
     TaskName      VARCHAR(255) NULL,
     OperationType VARCHAR(50)  NULL,
     EntityType    VARCHAR(255) NULL,
-    RowCount      INT          NULL,
+    [RowCount]      INT          NULL,
     AuditTime     DATETIME     NOT NULL DEFAULT GETDATE(),
     FileProcessed VARCHAR(500) NULL,
     EmployeeID    INT          NULL,
