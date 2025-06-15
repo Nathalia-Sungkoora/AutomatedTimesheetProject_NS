@@ -140,7 +140,7 @@ FROM   OPENROWSET(
        ) AS ProjectFile;
 
 EXEC SSISDB.catalog.deploy_project
-     @folder_name   = N'Automated_Timesheet_Project',
+     @folder_name   = N'AutomatedTimesheetProject',
      @project_name  = N'SSIS_Automated_Timesheet_Project',
      @project_stream= @ProjectBinary,
      @operation_id  = NULL;
