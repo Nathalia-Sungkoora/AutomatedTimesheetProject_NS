@@ -139,6 +139,10 @@ FROM   OPENROWSET(
          SINGLE_BLOB
        ) AS ProjectFile;
 
+--Create SSIS Folder 
+EXEC SSISDB.catalog.create_folder 
+     @folder_name = N'AutomatedTimesheetProject',
+     @folder_id   = NULL;
 
 EXEC SSISDB.catalog.deploy_project
      @folder_name   = N'AutomatedTimesheetProject',
