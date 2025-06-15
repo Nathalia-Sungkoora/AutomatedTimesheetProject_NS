@@ -1,4 +1,4 @@
-name: Deploy SSIS Project
+name: 🚀 Deploy SSIS Project
 
 on:
   push:
@@ -12,29 +12,49 @@ jobs:
       ISPAC_PATH: "C:\\AutomatedTimesheetProject_NS\\SSIS_Automated_Timesheet_Project\\SSIS_Automated_Timesheet_Project.ispac"
 
     steps:
-      - name: Checkout code
+      - name: 🧾 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Prepare AutomatedTimesheetAndSSISDeploy Script
+      - name: 🛠️ Prepare Deployment Script
         shell: powershell
         run: |
+          Write-Host "🛠️ Creating SQL script to deploy SSIS .ispac..."
           $sql = @"
           :setvar IspacFullPath "$env:ISPAC_PATH"
           :r C:\\AutomatedTimesheetProject_NS\\SQLScripts\\CreateTimesheetDBAndSSIS.sql
           "@
           $sql | Out-File -FilePath AutomatedTimesheetAndSSISDeploy.sql -Encoding ASCII
+          Write-Host "✅ Deployment script ready: AutomatedTimesheetAndSSISDeploy.sql"
 
-      - name: Deploy .ispac to SSISDB using Windows Auth
+      - name: 🚀 Deploy SSIS Project to SSISDB
         shell: cmd
         run: |
+          echo 🚀 Deploying .ispac to SSISDB...
           sqlcmd -S LAPTOP-JUKB3QVS -E -i AutomatedTimesheetAndSSISDeploy.sql
+          IF %ERRORLEVEL% NEQ 0 (
+            echo ❌ SSIS deployment failed!
+            exit /b %ERRORLEVEL%
+          )
+          echo ✅ SSIS project deployed successfully!
 
-      - name: Create or update SQL Agent job (SSIS Package)
+      - name: 🗓️ Create or Update SQL Agent Job
         shell: cmd
         run: |
+          echo 🗓️ Creating or updating SQL Agent Job...
           sqlcmd -S LAPTOP-JUKB3QVS -E -i C:\AutomatedTimesheetProject_NS\SQLScripts\AutomatedTimesheetProject_NS_Job.sql
+          IF %ERRORLEVEL% NEQ 0 (
+            echo ❌ Failed to create/update Agent Job!
+            exit /b %ERRORLEVEL%
+          )
+          echo ✅ SQL Agent Job ready!
 
-      - name: Run SQL Agent Job (AutomatedTimesheetProject_NS_Job)
+      - name: 🎯 Run SQL Agent Job
         shell: cmd
         run: |
+          echo 🎯 Executing SQL Agent Job: AutomatedTimesheetProject_NS_Job...
           sqlcmd -S LAPTOP-JUKB3QVS -E -Q "EXEC msdb.dbo.sp_start_job @job_name = N'AutomatedTimesheetProject_NS_Job'"
+          IF %ERRORLEVEL% NEQ 0 (
+            echo ❌ Job execution failed!
+            exit /b %ERRORLEVEL%
+          )
+          echo ✅ Job started successfully!
