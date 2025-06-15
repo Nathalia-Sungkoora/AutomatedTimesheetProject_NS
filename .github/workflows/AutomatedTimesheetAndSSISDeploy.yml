@@ -20,7 +20,7 @@ jobs:
         run: |
           $sql = @"
           :setvar IspacFullPath "$env:ISPAC_PATH"
-          :r C:\AutomatedTimesheetProject_NS\SQLScripts\AutomatedTimesheetAndSSISDeploy.sql
+          :r C:\\AutomatedTimesheetProject_NS\\SQLScripts\\CreateTimesheetDBAndSSIS.sql
           "@
           $sql | Out-File -FilePath AutomatedTimesheetAndSSISDeploy.sql -Encoding ASCII
 
