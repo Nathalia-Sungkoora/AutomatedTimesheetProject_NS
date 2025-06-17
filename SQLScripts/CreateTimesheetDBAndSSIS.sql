@@ -129,7 +129,7 @@ CREATE TABLE dbo.AuditLog (
 GO
 
 
-/****** SSIS PROJECT DEPLOYMENT SCRIPT ******/
+/***** SSIS PROJECT DEPLOYMENT SCRIPT *****/
 DECLARE @ProjectBinary VARBINARY(MAX);
 
 -- read the .ispac file as a single BLOB
