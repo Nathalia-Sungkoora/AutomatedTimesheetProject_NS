@@ -5,20 +5,43 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
-    runs-on: [self-hosted, windows]
+  create-db:
+    name: 🐧 Create TimesheetDB and Tables
+    runs-on: ubuntu-latest
 
     env:
-      ISPAC_PATH: "C:\\AutomatedTimesheetProject_NS\\SSISAutomatedTimesheetProject\\SSIS_Automated_Timesheet_Project.ispac"
       PINGGY_URL: ${{ secrets.PINGGY_URL }}
       SQL_USER: ${{ secrets.SQL_USER }}
       SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
 
     steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Install SQLCMD on Ubuntu
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
+
+      - name: 🗃️ Create TimesheetDB and Tables
+        run: |
+          /opt/mssql-tools/bin/sqlcmd -S $PINGGY_URL,1433 -U $SQL_USER -P $SQL_PASSWORD -i ./SQLScripts/CreateTimesheetDBAndSSIS.sql
+
+  deploy-ssis:
+    name: 🪟 Deploy SSIS Package
+    runs-on: [self-hosted, windows]
+    needs: create-db
+
+    env:
+      ISPAC_PATH: "C:\\AutomatedTimesheetProject_NS\\SSISAutomatedTimesheetProject\\SSIS_Automated_Timesheet_Project.ispac"
+
+    steps:
       - name: 🚀 Checkout code
         uses: actions/checkout@v4
 
-      - name: 📝 Prepare temp deploy script
+      - name: 📝 Prepare SSIS Deploy Script
         shell: powershell
         run: |
           $sql = @"
@@ -27,17 +50,29 @@ jobs:
           "@
           $sql | Out-File -FilePath AutomatedTimesheetAndSSISDeploy.sql -Encoding ASCII
 
-      - name: 📦 Deploy .ispac to SSISDB using Windows Auth (required by SSISDB)
+      - name: 📦 Deploy SSIS to SSISDB (Windows Auth required)
         shell: cmd
         run: |
           sqlcmd -S localhost -E -i AutomatedTimesheetAndSSISDeploy.sql
 
-      - name: 🧱 Create or update SQL Agent job (SSIS Package)
-        shell: cmd
-        run: |
-          sqlcmd -S %PINGGY_URL%,1433 -U %SQL_USER% -P %SQL_PASSWORD% -i C:\AutomatedTimesheetProject_NS\SQLScripts\AutomatedTimesheetProject_NS_Job.sql
+  create-agent-job:
+    name: 🧱 Create SQL Server Agent Job
+    runs-on: ubuntu-latest
+    needs: deploy-ssis
 
-      - name: ▶️ Run SQL Agent Job (AutomatedTimesheetProject_NS_Job)
-        shell: cmd
+    env:
+      PINGGY_URL: ${{ secrets.PINGGY_URL }}
+      SQL_USER: ${{ secrets.SQL_USER }}
+      SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
+
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚒️ Create SQL Agent Job
         run: |
-          sqlcmd -S %PINGGY_URL%,1433 -U %SQL_USER% -P %SQL_PASSWORD% -Q "EXEC msdb.dbo.sp_start_job @job_name = N'AutomatedTimesheetProject_NS_Job'"
+          /opt/mssql-tools/bin/sqlcmd -S $PINGGY_URL,1433 -U $SQL_USER -P $SQL_PASSWORD -i ./SQLScripts/AutomatedTimesheetProject_NS_Job.sql
+
+      - name: ▶️ Run SQL Agent Job
+        run: |
+          /opt/mssql-tools/bin/sqlcmd -S $PINGGY_URL,1433 -U $SQL_USER -P $SQL_PASSWORD -Q "EXEC msdb.dbo.sp_start_job @job_name = N'AutomatedTimesheetProject_NS_Job'"
