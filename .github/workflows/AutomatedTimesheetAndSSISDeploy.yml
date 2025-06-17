@@ -28,7 +28,7 @@ jobs:
 
       - name: ⚒️ Create TimesheetDB and Tables
         run: |
-          sqlcmd -S $PINGGY_URL,1433 -U $SQL_USER -P $SQL_PASSWORD -i ./SQLScripts/CreateTimesheetDBAndSSIS.sql
+          sqlcmd -S $PINGGY_URL,1433 -U $SQL_USER -P $SQL_PASSWORD -i ./SQLScripts/CreateTimesheetDBAndTables.sql
 
   deploy-ssis:
     name: 🚀 Deploy SSIS Package
@@ -47,7 +47,7 @@ jobs:
         run: |
           $sql = @"
           :setvar IspacFullPath "$env:ISPAC_PATH"
-          :r C:\\AutomatedTimesheetProject_NS\\SQLScripts\\CreateTimesheetDBAndSSIS.sql
+          :r C:\\AutomatedTimesheetProject_NS\\SQLScripts\\AutomatedSSISDeployment.sql
           "@
           $sql | Out-File -FilePath AutomatedTimesheetAndSSISDeploy.sql -Encoding ASCII
 

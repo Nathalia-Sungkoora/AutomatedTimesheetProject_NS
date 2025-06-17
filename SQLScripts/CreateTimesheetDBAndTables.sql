@@ -129,7 +129,7 @@ CREATE TABLE dbo.AuditLog (
 GO
 
 
-/***** SSIS PROJECT DEPLOYMENT SCRIPT *****/
+/***** SSIS PROJECT DEPLOYMENT SCRIPT 
 DECLARE @ProjectBinary VARBINARY(MAX);
 
 -- read the .ispac file as a single BLOB
@@ -148,5 +148,5 @@ EXEC SSISDB.catalog.deploy_project
      @folder_name   = N'AutomatedTimesheetProject',
      @project_name  = N'SSIS_Automated_Timesheet_Project',
      @project_stream= @ProjectBinary,
-     @operation_id  = NULL;
+     @operation_id  = NULL; *****/
 
