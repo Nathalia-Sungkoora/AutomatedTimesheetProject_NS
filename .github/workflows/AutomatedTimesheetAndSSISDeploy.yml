@@ -27,10 +27,10 @@ jobs:
           "@
           $sql | Out-File -FilePath AutomatedTimesheetAndSSISDeploy.sql -Encoding ASCII
 
-      - name: 📦 Deploy .ispac to SSISDB using SQL Auth
+      - name: 📦 Deploy .ispac to SSISDB using Windows Auth (required by SSISDB)
         shell: cmd
         run: |
-          sqlcmd -S %PINGGY_URL%,1433 -U %SQL_USER% -P %SQL_PASSWORD% -i AutomatedTimesheetAndSSISDeploy.sql
+          sqlcmd -S localhost -E -i AutomatedTimesheetAndSSISDeploy.sql
 
       - name: 🧱 Create or update SQL Agent job (SSIS Package)
         shell: cmd
