@@ -9,7 +9,7 @@ jobs:
     runs-on: [self-hosted, windows]
 
     env:
-      ISPAC_PATH: "C:\\AutomatedTimesheetProject_NS\\SSIS_Automated_Timesheet_Project\\SSIS_Automated_Timesheet_Project.ispac"
+      ISPAC_PATH: "C:\\AutomatedTimesheetProject_NS\\SSISAutomatedTimesheetProject\\SSIS_Automated_Timesheet_Project.ispac"
       PINGGY_URL: ${{ secrets.PINGGY_URL }}
       SQL_USER: ${{ secrets.SQL_USER }}
       SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
