@@ -1,4 +1,4 @@
-name: Deploy SSIS Project
+name: Deploy Automated Timesheet and SSIS Project
 
 on:
   push:
