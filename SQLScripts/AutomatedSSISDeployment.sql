@@ -1,4 +1,3 @@
-
 /***** SSIS PROJECT DEPLOYMENT SCRIPT  *****/
 DECLARE @ProjectBinary VARBINARY(MAX);
 
