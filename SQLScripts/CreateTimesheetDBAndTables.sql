@@ -1,6 +1,6 @@
-/* ================================================
+/* =================================================
    SQL STATEMENTS FOR AUTOMATED SSIS TIMESHEET PROJECT
-   ================================================ */
+   ================================================= */
 
 -- 1) Create the database if it doesn't exist
 IF DB_ID(N'TimesheetDB') IS NULL
